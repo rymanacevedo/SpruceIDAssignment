@@ -1,9 +1,15 @@
 {
-    "name": "spruceid-assignment",
-    "private": true,
-    "version": "1.0.0",
-    "type": "module",
-    "workspaces":[
-        "packages/*"
-    ]
+	"name": "spruceid-assignment",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"workspaces": [
+		"packages/*"
+	],
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.0"
+	},
+	"scripts": {
+		"format": "bunx @biomejs/biome format --write"
+	}
 }
