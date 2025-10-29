@@ -169,3 +169,10 @@ bun run format
 3. **Connection refused errors**
    - Ensure the service is running before starting the holder
    - The holder waits 2 seconds before making requests to allow service startup
+
+## Improvements
+   - Tests (integration/unit and installing test framework)
+   - Error handling/logging
+   - Input validation
+   - Rate limiting
+   - Environment variable configuration
