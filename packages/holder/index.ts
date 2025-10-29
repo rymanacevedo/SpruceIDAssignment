@@ -1,7 +1,7 @@
-import { generateKeyPair } from "crypto";
+import { createDecipheriv, generateKeyPair } from "crypto";
 
 function getKeyValuePair() {
-	const keyPair = generateKeyPair(
+	generateKeyPair(
 		"rsa",
 		{
 			modulusLength: 4096,
@@ -20,5 +20,9 @@ function getKeyValuePair() {
 			// Handle errors and use the generated key pair.
 		},
 	);
-	return keyPair;
 }
+
+function createMessage(nonce: string) {
+	return `This is a secret message with nonce: ${nonce}`;
+}
+// start the program
