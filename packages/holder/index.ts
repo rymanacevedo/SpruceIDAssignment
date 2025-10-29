@@ -4,6 +4,10 @@ type TokenResponse = {
 	token: string;
 };
 
+type ValidResponse = {
+	valid: boolean;
+};
+
 type KeyPair = {
 	publicKey: string;
 	privateKey: string;
@@ -19,23 +23,10 @@ function generateKeyPair(): KeyPair {
 		privateKeyEncoding: {
 			type: "pkcs8",
 			format: "pem",
-			cipher: "aes-256-cbc",
-			passphrase: "your-passphrase",
 		},
 	});
 
 	return { publicKey, privateKey };
-}
-
-function decryptKey(passphrase: string, encryptedKey: string): string {
-	const decipher = createDecipheriv(
-		"aes-256-cbc",
-		Buffer.from(passphrase),
-		Buffer.alloc(16, 0),
-	);
-	let decrypted = decipher.update(encryptedKey, "base64", "utf-8");
-	decrypted += decipher.final("utf-8");
-	return decrypted;
 }
 
 function createMessage(token: string) {
@@ -55,12 +46,25 @@ async function runHolder() {
 		console.log("Message to sign:", message);
 
 		const { publicKey, privateKey } = generateKeyPair();
-
-		const key = decryptKey("your-passphrase", privateKey);
-
 		const signer = createSign("RSA-SHA256");
 		signer.update(message);
-		const signature = signer.sign(key, "base64");
+		const signature = signer.sign(privateKey, "base64");
+
+		const verifyResponse = await fetch("http://localhost:3000/verify", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				token,
+				publicKey,
+				message,
+				signature,
+			}),
+		});
+
+		const { valid } = (await verifyResponse.json()) as ValidResponse;
+		console.log("Signature valid:", valid);
 	} catch (error) {
 		console.error("An error occurred in runHolder:", error);
 	}
