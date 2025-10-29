@@ -20,4 +20,17 @@ app.get("/nonce", (c) => {
 	return c.json({ token });
 });
 
+app.post("/verify", async (c) => {
+	const { token } = await c.req.json();
+
+	if (!nonceStore.has(token)) {
+		return c.json({ valid: false }, 400);
+	}
+
+	nonceStore.delete(token);
+	console.log(`Token verified and removed: ${token}`);
+
+	return c.json({ valid: true });
+});
+
 export default app;
