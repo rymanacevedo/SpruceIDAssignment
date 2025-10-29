@@ -39,7 +39,11 @@ app.post("/verify", async (c) => {
 	return c.json({ valid: true }, 200);
 });
 
-function verifySignature(publicKey: any, message: any, signature: any) {
+function verifySignature(
+	publicKey: string,
+	message: string,
+	signature: string,
+) {
 	const v = createVerify("SHA256");
 	v.update(message);
 	return v.verify(publicKey, signature, "base64");
