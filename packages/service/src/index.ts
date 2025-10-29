@@ -1,4 +1,4 @@
-import { randomBytes } from "crypto";
+import { createVerify, randomBytes } from "crypto";
 import { Hono } from "hono";
 
 const app = new Hono();
@@ -22,15 +22,27 @@ app.get("/nonce", (c) => {
 
 app.post("/verify", async (c) => {
 	const { token } = await c.req.json();
+	const { publicKey, message, signature } = await c.req.json();
 
 	if (!nonceStore.has(token)) {
 		return c.json({ valid: false }, 400);
 	}
 
 	nonceStore.delete(token);
-	console.log(`Token verified and removed: ${token}`);
 
-	return c.json({ valid: true });
+	const isValid = verifySignature(publicKey, message, signature);
+
+	if (!isValid) {
+		return c.json({ valid: false }, 401);
+	}
+
+	return c.json({ valid: true }, 200);
 });
+
+function verifySignature(publicKey: any, message: any, signature: any) {
+	const v = createVerify("SHA256");
+	v.update(message);
+	return v.verify(publicKey, signature, "base64");
+}
 
 export default app;
