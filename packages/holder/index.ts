@@ -1,30 +1,28 @@
-import { createDecipheriv, generateKeyPair } from "crypto";
-import type { Token } from "typescript";
+import { createSign, generateKeyPairSync } from "crypto";
 
 type TokenResponse = {
 	token: string;
 };
 
-function getKeyValuePair() {
-	generateKeyPair(
-		"rsa",
-		{
-			modulusLength: 4096,
-			publicKeyEncoding: {
-				type: "spki",
-				format: "pem",
-			},
-			privateKeyEncoding: {
-				type: "pkcs8",
-				format: "pem",
-				cipher: "aes-256-cbc",
-				passphrase: "super top secret",
-			},
+type KeyPair = {
+	publicKey: string;
+	privateKey: string;
+};
+
+function generateKeyPair(): KeyPair {
+	const { publicKey, privateKey } = generateKeyPairSync("rsa", {
+		modulusLength: 2048, // Reduced for faster generation, increase to 4096 for production
+		publicKeyEncoding: {
+			type: "spki",
+			format: "pem",
 		},
-		(err, publicKey, privateKey) => {
-			// Handle errors and use the generated key pair.
+		privateKeyEncoding: {
+			type: "pkcs8",
+			format: "pem",
 		},
-	);
+	});
+
+	return { publicKey, privateKey };
 }
 
 function createMessage(token: string) {
@@ -42,6 +40,11 @@ async function runHolder() {
 
 		const message = createMessage(token);
 		console.log("Message to sign:", message);
+		+
+		const { publicKey, privateKey } = generateKeyPair();
+		const signer = createSign("RSA-SHA256");
+		signer.update(message);
+		const signature = signer.sign(privateKey, "base64");
 	} catch (error) {
 		console.error("An error occurred in runHolder:", error);
 	}
