@@ -1,4 +1,4 @@
-import { createDecipheriv, createSign, generateKeyPairSync } from "crypto";
+import { createSign, generateKeyPairSync } from "crypto";
 
 type TokenResponse = {
 	token: string;
