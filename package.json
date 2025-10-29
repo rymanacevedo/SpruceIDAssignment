@@ -11,7 +11,8 @@
 		"turbo": "^2.5.8"
 	},
 	"scripts": {
-		"format": "bunx @biomejs/biome format --write"
+		"format": "bunx @biomejs/biome format --write",
+		"start": "turbo run start --filter=service --filter=holder"
 	},
 	"packageManager": "bun@1.2.23"
 }

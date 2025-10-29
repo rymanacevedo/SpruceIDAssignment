@@ -4,7 +4,8 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"dev": "bun run index.js"
+		"dev": "bun run --hot index.ts",
+		"start": "bun run index.js"
 	},
 	"devDependencies": {
 		"@types/bun": "latest"
